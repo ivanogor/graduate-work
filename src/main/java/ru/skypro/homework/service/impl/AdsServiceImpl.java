@@ -2,6 +2,8 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.AdDto;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ExtendedAdDto;
@@ -45,7 +47,35 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public String updateImage(Integer id, String imageLink) {
+    public String updateImage(Integer id, MultipartFile image) {
         return "";
+    }
+
+    @Override
+    public Boolean findById(Integer id) {
+        return !repisitory.findById(id).isEmpty();
+    }
+
+    //temp method
+    public AdDto mapAdToDto(Ad ad) {
+        return AdDto.builder()
+                .pk(ad.getPk())
+                .title(ad.getTitle())
+                .price(ad.getPrice())
+                .build();
+    }
+
+    //temp method
+    public Ad mapAdDtotoAd(AdDto dto) {
+        return Ad.builder()
+                .title(dto.getTitle())
+                .price(dto.getPrice())
+                .build();
+    }
+
+    //temp method
+    public AdDto createNewAd(AdDto ad) {
+        Ad newAd = createAds(mapAdDtotoAd(ad));
+        return mapAdToDto(newAd);
     }
 }

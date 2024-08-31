@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -28,6 +29,10 @@ public class Ad {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "image_link")
-    private String image;
+    @Column(name = "image")
+    @Lob
+    private byte[] image;
+
+    @Column(name = "description")
+    private String description;
 }

@@ -1,5 +1,6 @@
 package ru.skypro.homework.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ExtendedAdDto;
@@ -18,5 +19,7 @@ public interface AdsService {
 
     AdsDto getAdsByUser();
 
-    String updateImage(Integer id, String imageLink);
+    String updateImage(Integer id, MultipartFile image);
+
+    Boolean findById(Integer id);
 }
