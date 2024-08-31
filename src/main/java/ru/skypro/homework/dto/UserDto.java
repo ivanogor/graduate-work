@@ -1,5 +1,6 @@
 package ru.skypro.homework.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,12 +13,39 @@ import ru.skypro.homework.entity.User;
 @AllArgsConstructor
 @Builder
 public class UserDto {
+    @Schema(
+            description = "id пользователя"
+    )
     private Long id;
+
+    @Schema(
+            description = "логин пользователя"
+    )
     private String email;
+
+    @Schema(
+            description = "имя пользователя"
+    )
     private String firstName;
+
+    @Schema(
+            description = "фамилия пользователя"
+    )
     private String lastName;
+
+    @Schema(
+            description = "id пользователя"
+    )
     private String phone;
+
+    @Schema(
+            description = "роль пользователя", implementation = Role.class
+    )
     private Role role;
+
+    @Schema(
+            description = "ссылка на аватар пользователя"
+    )
     private String image;
 
     public static UserDto toDto(User user){

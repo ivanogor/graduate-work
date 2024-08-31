@@ -2,8 +2,8 @@ package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.NewPasswordDto;
-import ru.skypro.homework.dto.UpdateUserDto;
+import ru.skypro.homework.dto.NewPassword;
+import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.service.UserService;
 
@@ -11,7 +11,7 @@ import ru.skypro.homework.service.UserService;
 public class UserServiceImpl implements UserService {
 
     @Override
-    public void setPassword(NewPasswordDto newPassword) {
+    public void setPassword(NewPassword newPassword) {
 
     }
 
@@ -21,8 +21,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UpdateUserDto updateUser(UpdateUserDto updateUserDto) {
-        return UpdateUserDto.builder().build();
+    public UpdateUser updateUser(UpdateUser updateUser) {
+        return UpdateUser.builder().build();
     }
 
     @Override
