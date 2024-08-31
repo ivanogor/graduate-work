@@ -1,6 +1,7 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -144,8 +145,9 @@ public class AdsController {
     @PatchMapping(value = "{id}/image", consumes = MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Ok",
-            content = {@Content(mediaType = "application/octet-stream",
-                    schema = @Schema(type = "string", format = "byte"))}),
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(type = "string",
+                            format = "byte")))),
             @ApiResponse(responseCode = "401",
                     description = "Unauthorized",
                     content = @Content(schema = @Schema(hidden = true))),
