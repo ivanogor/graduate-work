@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
-import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.User;
 import ru.skypro.homework.service.UserService;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -45,7 +45,7 @@ public class UserController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "OK",
             content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserDto.class))}),
+                    schema = @Schema(implementation = User.class))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true)))})
     ResponseEntity<?> getCurrentUser(){
         return ResponseEntity.status(HttpStatus.OK).build();

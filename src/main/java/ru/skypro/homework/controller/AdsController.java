@@ -24,10 +24,10 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequestMapping("ads")
 @Tag(name = "Объявления")
 public class AdsController {
-    private final AdsServiceImpl adsSevice;
+    private final AdsServiceImpl adsService;
 
-    public AdsController(AdsServiceImpl adsSevice) {
-        this.adsSevice = adsSevice;
+    public AdsController(AdsServiceImpl adsService) {
+        this.adsService = adsService;
     }
 
     @Operation(summary = "Добавление объявления")
@@ -42,7 +42,7 @@ public class AdsController {
     })
     public ResponseEntity<Ad> createAds(@RequestPart("properties") Ad ad,
                                         @RequestPart("image") MultipartFile image) {
-        Ad response = adsSevice.createNewAd(ad);
+        Ad response = adsService.createNewAd(ad);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -60,8 +60,8 @@ public class AdsController {
                     content = @Content(schema = @Schema(hidden = true)))
     })
     public ResponseEntity<ExtendedAd> getExtendedAd(@PathVariable Integer id) {
-        ExtendedAd response = adsSevice.getExtendedAd(id);
-        if (!adsSevice.findById(id)) {
+        ExtendedAd response = adsService.getExtendedAd(id);
+        if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(response);
@@ -75,7 +75,7 @@ public class AdsController {
                     schema = @Schema(implementation = Ads.class))})
     })
     public ResponseEntity<Ads> getAdsDto() {
-        Ads response = adsSevice.getAdsDto();
+        Ads response = adsService.getAdsDto();
         return ResponseEntity.ok().body(response);
     }
 
@@ -95,10 +95,10 @@ public class AdsController {
                     content = @Content(schema = @Schema(hidden = true)))
     })
     public ResponseEntity<?> deleteAd(@PathVariable Integer id) {
-        if (!adsSevice.findById(id)) {
+        if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
-        adsSevice.deleteAd(id);
+        adsService.deleteAd(id);
         return ResponseEntity.ok().build();
     }
 
@@ -119,10 +119,10 @@ public class AdsController {
                     content = @Content(schema = @Schema(hidden = true)))
     })
     public ResponseEntity<Ad> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAd ad) {
-        if (!adsSevice.findById(id)) {
+        if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
-        Ad response = adsSevice.updateAd(id, ad);
+        Ad response = adsService.updateAd(id, ad);
         return ResponseEntity.ok().body(response);
     }
 
@@ -137,7 +137,7 @@ public class AdsController {
                     content = @Content(schema = @Schema(hidden = true)))
     })
     public ResponseEntity<Ads> getAdsByUser() {
-        Ads response = adsSevice.getAdsByUser();
+        Ads response = adsService.getAdsByUser();
         return ResponseEntity.ok().body(response);
     }
 
@@ -145,7 +145,7 @@ public class AdsController {
     @PatchMapping(value = "{id}/image", consumes = MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Ok",
-            content = @Content(mediaType = "application/json",
+            content = @Content(mediaType = "application/octet-stream",
                     array = @ArraySchema(schema = @Schema(type = "string",
                             format = "byte")))),
             @ApiResponse(responseCode = "401",
@@ -160,10 +160,10 @@ public class AdsController {
     })
     public ResponseEntity<?> updateImage(@PathVariable Integer id,
                                          @RequestParam("image") MultipartFile image) {
-        if (!adsSevice.findById(id)) {
+        if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
-        String response = adsSevice.updateImage(id, image);
+        String response = adsService.updateImage(id, image);
         return ResponseEntity.ok().body(response);
     }
 }

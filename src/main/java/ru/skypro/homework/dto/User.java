@@ -6,13 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.entity.Role;
-import ru.skypro.homework.entity.User;
+import ru.skypro.homework.entity.UserEntity;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class User {
     @Schema(
             description = "id пользователя"
     )
@@ -48,20 +48,20 @@ public class UserDto {
     )
     private String image;
 
-    public static UserDto toDto(User user){
-        return UserDto.builder()
-                .email(user.getEmail())
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .phone(user.getPhone())
-                .role(user.getRole())
-                .image(user.getImage())
+    public static User toDto(UserEntity userEntity){
+        return User.builder()
+                .email(userEntity.getEmail())
+                .id(userEntity.getId())
+                .firstName(userEntity.getFirstName())
+                .lastName(userEntity.getLastName())
+                .phone(userEntity.getPhone())
+                .role(userEntity.getRole())
+                .image(userEntity.getImage())
                 .build();
     }
 
-    public User toEntity(){
-        return User.builder()
+    public UserEntity toEntity(){
+        return UserEntity.builder()
                 .email(email)
                 .firstName(firstName)
                 .lastName(lastName)
