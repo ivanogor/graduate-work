@@ -1,23 +1,24 @@
 package ru.skypro.homework.service;
 
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.AdsDto;
-import ru.skypro.homework.dto.CreateOrUpdateAdDto;
-import ru.skypro.homework.dto.ExtendedAdDto;
-import ru.skypro.homework.entity.Ad;
+import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.entity.AdEntity;
 
 public interface AdsService {
-    Ad createAds(Ad ad);
+    AdEntity createAds(AdEntity adEntity);
 
-    ExtendedAdDto getExtendedAd(Integer id);
+    ExtendedAd getExtendedAd(Integer id);
 
-    AdsDto getAdsDto();
+    Ads getAdsDto();
 
     void deleteAd(Integer id);
 
-    Ad updateAd(Integer id, CreateOrUpdateAdDto adDto);
+    Ad updateAd(Integer id, CreateOrUpdateAd adDto);
 
-    AdsDto getAdsByUser();
+    Ads getAdsByUser();
 
     String updateImage(Integer id, MultipartFile image);
 

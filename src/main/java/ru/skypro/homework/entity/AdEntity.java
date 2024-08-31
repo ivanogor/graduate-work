@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -14,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "ads")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Ad {
+public class AdEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pk")
@@ -30,8 +29,7 @@ public class Ad {
     private String title;
 
     @Column(name = "image")
-    @Lob
-    private byte[] image;
+    private String image;
 
     @Column(name = "description")
     private String description;
