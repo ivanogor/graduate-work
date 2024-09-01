@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public class Comments {
     @Schema(description = "общее количество комментариев")
-    Integer count;
-    List<Comment> results;
+    private Integer count;
+    private List<Comment> results;
 }
