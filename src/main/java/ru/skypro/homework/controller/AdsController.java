@@ -7,8 +7,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
@@ -17,8 +20,10 @@ import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.service.impl.AdsServiceImpl;
 
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+@Slf4j
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("ads")
@@ -142,10 +147,9 @@ public class AdsController {
     }
 
     @Operation(summary = "Обновление картинки объявления")
-    @PatchMapping(value = "{id}/image", consumes = MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Ok",
-            content = @Content(mediaType = "application/octet-stream",
+            content = @Content(mediaType = APPLICATION_OCTET_STREAM_VALUE,
                     array = @ArraySchema(schema = @Schema(type = "string",
                             format = "byte")))),
             @ApiResponse(responseCode = "401",
@@ -158,12 +162,15 @@ public class AdsController {
                     description = "Not found",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<?> updateImage(@PathVariable Integer id,
-                                         @RequestParam("image") MultipartFile image) {
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping(value = "{id}/image", consumes = MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<byte[]> updateImage(@PathVariable Integer id,
+                                              @RequestParam("image") MultipartFile image,
+                                              Authentication authentication) {
         if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
-        String response = adsService.updateImage(id, image);
+        byte[] response = adsService.updateImage(id, image);
         return ResponseEntity.ok().body(response);
     }
 }
