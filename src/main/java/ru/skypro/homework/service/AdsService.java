@@ -20,7 +20,7 @@ public interface AdsService {
 
     Ads getAdsByUser();
 
-    String updateImage(Integer id, MultipartFile image);
+    byte[] updateImage(Integer id, MultipartFile image);
 
     Boolean findById(Integer id);
 }
