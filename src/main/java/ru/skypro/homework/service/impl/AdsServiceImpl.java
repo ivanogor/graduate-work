@@ -8,17 +8,17 @@ import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.entity.AdEntity;
-import ru.skypro.homework.repository.AdEntityRepisitory;
+import ru.skypro.homework.repository.AdEntityRepository;
 import ru.skypro.homework.service.AdsService;
 
 @Service
 @RequiredArgsConstructor
 public class AdsServiceImpl implements AdsService {
-    private final AdEntityRepisitory repisitory;
+    private final AdEntityRepository repository;
 
     @Override
     public AdEntity createAds(AdEntity adEntity) {
-        return repisitory.save(adEntity);
+        return repository.save(adEntity);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public void deleteAd(Integer id) {
-        repisitory.deleteById(id);
+        repository.deleteById(id);
     }
 
     @Override
@@ -53,29 +53,6 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public Boolean findById(Integer id) {
-        return !repisitory.findById(id).isEmpty();
-    }
-
-    //temp method
-    public Ad mapAdToDto(AdEntity adEntity) {
-        return Ad.builder()
-                .pk(adEntity.getPk())
-                .title(adEntity.getTitle())
-                .price(adEntity.getPrice())
-                .build();
-    }
-
-    //temp method
-    public AdEntity mapAdDtotoAd(Ad ad) {
-        return AdEntity.builder()
-                .title(ad.getTitle())
-                .price(ad.getPrice())
-                .build();
-    }
-
-    //temp method
-    public Ad createNewAd(Ad ad) {
-        AdEntity newAdEntity = createAds(mapAdDtotoAd(ad));
-        return mapAdToDto(newAdEntity);
+        return !repository.findById(id).isEmpty();
     }
 }

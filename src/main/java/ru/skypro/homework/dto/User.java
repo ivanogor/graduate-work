@@ -48,7 +48,7 @@ public class User {
     )
     private String image;
 
-    public static User toDto(UserEntity userEntity){
+    public static User toDto(UserEntity userEntity) {
         return User.builder()
                 .email(userEntity.getEmail())
                 .id(userEntity.getId())
@@ -60,7 +60,7 @@ public class User {
                 .build();
     }
 
-    public UserEntity toEntity(){
+    public UserEntity toEntity() {
         return UserEntity.builder()
                 .email(email)
                 .firstName(firstName)
