@@ -13,7 +13,15 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Builder
 public class Ads {
+
     @Schema(description = "общее количество объявлений")
     private Integer count;
     private ArrayList<Ad> results;
+
+    public Ads getAds(Integer countAds, ArrayList<Ad> ads) {
+        return Ads.builder()
+                .count(countAds)
+                .results(ads)
+                .build();
+    }
 }

@@ -20,6 +20,8 @@ import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.service.impl.AdsServiceImpl;
 
+import java.io.IOException;
+
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -45,9 +47,11 @@ public class AdsController {
                     description = "Unauthorized",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Ad> createAds(@RequestPart("properties") Ad ad,
-                                        @RequestPart("image") MultipartFile image) {
-        Ad response = adsService.createNewAd(ad);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Ad> createAds(@RequestPart("properties") CreateOrUpdateAd createAd,
+                                        @RequestPart("image") MultipartFile image,
+                                        Authentication authentication) throws IOException {
+        Ad response = adsService.createAds(createAd, image, authentication);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -64,11 +68,13 @@ public class AdsController {
                     description = "Not found",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<ExtendedAd> getExtendedAd(@PathVariable Integer id) {
-        ExtendedAd response = adsService.getExtendedAd(id);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ExtendedAd> getExtendedAd(@PathVariable Integer id,
+                                                    Authentication authentication) {
         if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
+        ExtendedAd response = adsService.getExtendedAd(id, authentication);
         return ResponseEntity.ok().body(response);
     }
 
@@ -79,6 +85,7 @@ public class AdsController {
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Ads.class))})
     })
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Ads> getAdsDto() {
         Ads response = adsService.getAdsDto();
         return ResponseEntity.ok().body(response);
@@ -99,11 +106,13 @@ public class AdsController {
                     description = "Not found",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<?> deleteAd(@PathVariable Integer id) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> deleteAd(@PathVariable Integer id,
+                                      Authentication authentication) {
         if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
-        adsService.deleteAd(id);
+        adsService.deleteAd(id, authentication);
         return ResponseEntity.ok().build();
     }
 
@@ -123,11 +132,14 @@ public class AdsController {
                     description = "Not found",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Ad> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAd ad) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Ad> updateAd(@PathVariable Integer id,
+                                       @RequestBody CreateOrUpdateAd ad,
+                                       Authentication authentication) {
         if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
-        Ad response = adsService.updateAd(id, ad);
+        Ad response = adsService.updateAd(id, ad, authentication);
         return ResponseEntity.ok().body(response);
     }
 
@@ -141,8 +153,8 @@ public class AdsController {
                     description = "Unauthorized",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Ads> getAdsByUser() {
-        Ads response = adsService.getAdsByUser();
+    public ResponseEntity<Ads> getAdsByUser(Authentication authentication) {
+        Ads response = adsService.getAdsByUser(authentication);
         return ResponseEntity.ok().body(response);
     }
 
@@ -170,7 +182,7 @@ public class AdsController {
         if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }
-        byte[] response = adsService.updateImage(id, image);
+        byte[] response = adsService.updateImage(id, image, authentication);
         return ResponseEntity.ok().body(response);
     }
 }
