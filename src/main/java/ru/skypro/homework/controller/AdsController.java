@@ -178,7 +178,7 @@ public class AdsController {
     @PatchMapping(value = "{id}/image", consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> updateImage(@PathVariable Integer id,
                                               @RequestParam("image") MultipartFile image,
-                                              Authentication authentication) {
+                                              Authentication authentication) throws IOException {
         if (!adsService.findById(id)) {
             return ResponseEntity.notFound().build();
         }

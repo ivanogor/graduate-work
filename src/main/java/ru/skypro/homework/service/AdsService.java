@@ -24,7 +24,8 @@ public interface AdsService {
 
     Ads getAdsByUser(Authentication authentication);
 
-    byte[] updateImage(Integer id, MultipartFile image, Authentication authentication);
+    byte[] updateImage(Integer id, MultipartFile image, Authentication authentication)
+            throws IOException;
 
     Boolean findById(Integer id);
 
