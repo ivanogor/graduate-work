@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdEntity;
+
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
+
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.utils.AdImageMapper;
 
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AdsServiceImpl implements AdsService {
+
     private final AdRepository adRepository;
     private final UserRepository userRepository;
 
@@ -37,6 +40,7 @@ public class AdsServiceImpl implements AdsService {
         AdEntity adEntity = createAd.mapDtoToAdEntity(link, user.getId());
         adRepository.save(adEntity);
         return Ad.mapEntityToDto(adEntity);
+
     }
 
     @Override
@@ -59,9 +63,11 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
+
     public void deleteAd(Integer id, Authentication authentication) {
         logger.info("Was invoked delete Ad method");
         adRepository.deleteById(id);
+
     }
 
     @Override
@@ -91,6 +97,7 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public Boolean findById(Integer id) {
+
         logger.info("Was invoked find Ad by id method");
         return !adRepository.findById(id).isEmpty();
     }
@@ -100,5 +107,6 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked handle User method");
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         return userRepository.findByUsername(principal.getUsername());
+
     }
 }
