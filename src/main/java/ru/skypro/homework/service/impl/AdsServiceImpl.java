@@ -90,14 +90,14 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public byte[] updateImage(Integer id, MultipartFile image, Authentication authentication) {
+    public byte[] updateImage(Integer id, MultipartFile image, Authentication authentication) throws IOException {
         logger.info("Was invoked update Ads image method");
-        return null;
+        AdEntity ad = adRepository.findById(id).get();
+        return new AdImageMapper().mapPathToFile(ad.getImage());
     }
 
     @Override
     public Boolean findById(Integer id) {
-
         logger.info("Was invoked find Ad by id method");
         return !adRepository.findById(id).isEmpty();
     }
@@ -107,6 +107,5 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked handle User method");
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         return userRepository.findByUsername(principal.getUsername());
-
     }
 }
