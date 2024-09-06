@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.skypro.homework.entity.AdEntity;
+import ru.skypro.homework.entity.UserEntity;
 
 @Data
 @Builder
@@ -29,4 +31,18 @@ public class ExtendedAd {
     private Integer price;
     @Schema(description = "заголовок объявления")
     private String title;
+
+    public static ExtendedAd mapAdEntityToDto(AdEntity Ad, UserEntity user) {
+
+        return ExtendedAd.builder()
+                .pk(Ad.getPk())
+                .description(Ad.getDescription())
+                .price(Ad.getPrice())
+                .title(Ad.getTitle())
+                .authorFirstName(user.getFirstName())
+                .authorLastName(user.getLastName())
+                .phone(user.getPhone())
+                .email(user.getEmail())
+                .build();
+    }
 }
