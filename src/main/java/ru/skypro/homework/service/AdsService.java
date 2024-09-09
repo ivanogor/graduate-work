@@ -6,6 +6,7 @@ import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.UserEntity;
 
 import java.io.IOException;
@@ -27,7 +28,9 @@ public interface AdsService {
     byte[] updateImage(Integer id, MultipartFile image, Authentication authentication)
             throws IOException;
 
-    Boolean findById(Integer id);
+    Boolean foundById(Integer id);
 
     UserEntity handleUser(Authentication authentication);
+
+    AdEntity findById(Integer id);
 }
