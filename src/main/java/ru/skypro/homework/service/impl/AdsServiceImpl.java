@@ -40,7 +40,6 @@ public class AdsServiceImpl implements AdsService {
         AdEntity adEntity = createAd.mapDtoToAdEntity(link, user.getId());
         adRepository.save(adEntity);
         return Ad.mapEntityToDto(adEntity);
-
     }
 
     @Override

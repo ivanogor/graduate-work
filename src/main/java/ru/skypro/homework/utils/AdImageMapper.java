@@ -35,12 +35,12 @@ public class AdImageMapper {
         ) {
             bis.transferTo(bos);
         }
-        return filePath.toString();
+        return "/image/" + uniqueId + "." + getExtention(imageFile);
     }
 
     public byte[] mapPathToFile(String imageLink) throws IOException {
         Path path = Path.of(imageLink);
-        File imageFile = new File(imageLink);
+        File imageFile = new File(savePath.concat("\\").concat(imageLink));
         try (
                 FileInputStream fis = new FileInputStream(imageFile);
         ) {
@@ -53,5 +53,9 @@ public class AdImageMapper {
     private String getExtention(MultipartFile imageFile) {
         String fileName = imageFile.getOriginalFilename();
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public String getPath(String arg) {
+        return savePath.concat("\\").concat(arg);
     }
 }
