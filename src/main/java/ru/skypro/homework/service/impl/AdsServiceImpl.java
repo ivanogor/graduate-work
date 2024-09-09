@@ -96,7 +96,7 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public Boolean findById(Integer id) {
+    public Boolean foundById(Integer id) {
         logger.info("Was invoked find Ad by id method");
         return !adRepository.findById(id).isEmpty();
     }
@@ -106,5 +106,10 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked handle User method");
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         return userRepository.findByUsername(principal.getUsername());
+    }
+
+    @Override
+    public AdEntity findById(Integer id) {
+        return adRepository.findById(id).get();
     }
 }

@@ -71,11 +71,12 @@ public class AdsController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ExtendedAd> getExtendedAd(@PathVariable Integer id,
                                                     Authentication authentication) {
-        if (!adsService.findById(id)) {
+        if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
+        } else {
+            ExtendedAd response = adsService.getExtendedAd(id, authentication);
+            return ResponseEntity.ok().body(response);
         }
-        ExtendedAd response = adsService.getExtendedAd(id, authentication);
-        return ResponseEntity.ok().body(response);
     }
 
     @Operation(summary = "Получение всех объявлений")
@@ -109,11 +110,14 @@ public class AdsController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteAd(@PathVariable Integer id,
                                       Authentication authentication) {
-        if (!adsService.findById(id)) {
+        if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
+        } else if (!adsService.handleUser(authentication).getId().equals(adsService.findById(id).getAuthor())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            adsService.deleteAd(id, authentication);
+            return ResponseEntity.ok().build();
         }
-        adsService.deleteAd(id, authentication);
-        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Обновление информации об объявлении")
@@ -136,11 +140,14 @@ public class AdsController {
     public ResponseEntity<Ad> updateAd(@PathVariable Integer id,
                                        @RequestBody CreateOrUpdateAd ad,
                                        Authentication authentication) {
-        if (!adsService.findById(id)) {
+        if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
+        } else if (!adsService.handleUser(authentication).getId().equals(adsService.findById(id).getAuthor())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            Ad response = adsService.updateAd(id, ad, authentication);
+            return ResponseEntity.ok().body(response);
         }
-        Ad response = adsService.updateAd(id, ad, authentication);
-        return ResponseEntity.ok().body(response);
     }
 
     @Operation(summary = "Получение объявлений авторизованного пользователя")
@@ -179,10 +186,13 @@ public class AdsController {
     public ResponseEntity<byte[]> updateImage(@PathVariable Integer id,
                                               @RequestParam("image") MultipartFile image,
                                               Authentication authentication) throws IOException {
-        if (!adsService.findById(id)) {
+        if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
+        } else if (!adsService.handleUser(authentication).getId().equals(adsService.findById(id).getAuthor())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            byte[] response = adsService.updateImage(id, image, authentication);
+            return ResponseEntity.ok().body(response);
         }
-        byte[] response = adsService.updateImage(id, image, authentication);
-        return ResponseEntity.ok().body(response);
     }
 }
