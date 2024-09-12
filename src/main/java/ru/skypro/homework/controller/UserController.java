@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
@@ -37,6 +39,17 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "403", description = "Forbidden",content = @Content(schema = @Schema(hidden = true)))})
     ResponseEntity<?> setPassword(@RequestBody(required = false) NewPassword newPassword){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String username = authentication.getName();
+        if (!userService.hasAccessToChangePassword(username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        userService.setPassword(newPassword);
         return ResponseEntity.ok().build();
     }
 
@@ -48,6 +61,11 @@ public class UserController {
                     schema = @Schema(implementation = User.class))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true)))})
     ResponseEntity<User> getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         return ResponseEntity.ok(userService.getCurrentUser());
     }
 
@@ -58,8 +76,13 @@ public class UserController {
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = UpdateUser.class))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true)))})
-    ResponseEntity<?> updateUser(@RequestBody(required = false) UpdateUser updateUser){
-        return ResponseEntity.status(HttpStatus.OK).build();
+    ResponseEntity<UpdateUser> updateUser(@RequestBody(required = false) UpdateUser updateUser){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok(userService.updateUser(updateUser));
     }
 
     @PatchMapping(value = "/me/image", consumes = MULTIPART_FORM_DATA_VALUE)
@@ -70,6 +93,7 @@ public class UserController {
                     schema = @Schema(hidden = true))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true)))})
     public ResponseEntity<?> updateUserAvatar(@RequestParam("image") MultipartFile image) {
-        return ResponseEntity.status(HttpStatus.OK).build();
+        userService.updateUserAvatar(image);
+        return ResponseEntity.ok().build();
     }
 }
