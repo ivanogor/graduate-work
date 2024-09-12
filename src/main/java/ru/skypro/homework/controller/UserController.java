@@ -37,7 +37,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "403", description = "Forbidden",content = @Content(schema = @Schema(hidden = true)))})
     ResponseEntity<?> setPassword(@RequestBody(required = false) NewPassword newPassword){
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/me")
@@ -47,8 +47,8 @@ public class UserController {
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = User.class))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true)))})
-    ResponseEntity<?> getCurrentUser(){
-        return ResponseEntity.status(HttpStatus.OK).build();
+    ResponseEntity<User> getCurrentUser(){
+        return ResponseEntity.ok(userService.getCurrentUser());
     }
 
     @PatchMapping("/me")
