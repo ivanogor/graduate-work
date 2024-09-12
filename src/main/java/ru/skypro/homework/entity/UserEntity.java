@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -44,4 +45,8 @@ public class UserEntity {
 
     @Column(name = "image")
     private String image;
+
+    @Column(name = "ads")
+    @OneToMany(mappedBy = "user")
+    private List<AdEntity> adsList;
 }
