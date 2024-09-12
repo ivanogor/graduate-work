@@ -68,6 +68,7 @@ public class User {
                 .phone(phone)
                 .role(role)
                 .image(image)
+                .enabled(true)
                 .build();
     }
 }

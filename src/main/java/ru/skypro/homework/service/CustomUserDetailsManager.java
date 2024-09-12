@@ -1,18 +1,13 @@
 package ru.skypro.homework.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.entity.AuthorityEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AuthorityRepository;
@@ -28,10 +23,9 @@ import java.util.stream.Collectors;
 public class CustomUserDetailsManager {
     private final UserEntityRepository userEntityRepository;
     private final AuthorityRepository authorityRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public void createUser(UserDetails user) {
-        UserEntity userEntity = new UserEntity();
+    public void createUser(UserDetails user, Register register) {
+        UserEntity userEntity = register.toUserEntity();
         userEntity.setUsername(user.getUsername());
         userEntity.setPassword(user.getPassword());
         userEntity.setEnabled(user.isEnabled());
