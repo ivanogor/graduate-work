@@ -19,6 +19,8 @@ import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.entity.Role;
+import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.service.impl.AdsServiceImpl;
 
 import java.io.IOException;
@@ -114,7 +116,7 @@ public class AdsController {
                                       Authentication authentication) {
         if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
-        } else if (!adsService.handleUser(authentication).getId().equals(adsService.findById(id).getAuthor())) {
+        } else if (!checkAccess(authentication, id) && !getRole(authentication).equals(Role.ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
             adsService.deleteAd(id, authentication);
@@ -144,7 +146,7 @@ public class AdsController {
                                        Authentication authentication) {
         if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
-        } else if (!adsService.handleUser(authentication).getId().equals(adsService.findById(id).getAuthor())) {
+        } else if (!checkAccess(authentication, id) && !getRole(authentication).equals(Role.ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
             Ad response = adsService.updateAd(id, ad, authentication);
@@ -190,11 +192,22 @@ public class AdsController {
                                               Authentication authentication) throws IOException {
         if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
-        } else if (!adsService.handleUser(authentication).getId().equals(adsService.findById(id).getAuthor())) {
+        } else if (!checkAccess(authentication, id) && !getRole(authentication).equals(Role.ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
             byte[] response = adsService.updateImage(id, image, authentication);
             return ResponseEntity.ok().body(response);
         }
+    }
+
+    private boolean checkAccess(Authentication authentication, Integer adId) {
+        Long userId = adsService.handleUser(authentication).getId();
+        Long authorId = adsService.findById(adId).getAuthor();
+        return userId.equals(authorId);
+    }
+
+    private Role getRole(Authentication authentication) {
+        UserEntity user = adsService.handleUser(authentication);
+        return user.getRole();
     }
 }
