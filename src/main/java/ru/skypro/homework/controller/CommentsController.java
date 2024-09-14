@@ -8,11 +8,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.entity.Role;
+import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.service.impl.CommentsServiceImpl;
+import ru.skypro.homework.utils.AdServiceUtils;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -21,6 +28,8 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 @Tag(name = "Комментарии")
 @RequestMapping("ads")
 public class CommentsController {
+    private final CommentsServiceImpl commentsService;
+    private final AdServiceUtils adUtils;
 
     @GetMapping("/{id}/comments")
     @Operation(summary = "Получение комментариев объявления")
@@ -30,8 +39,9 @@ public class CommentsController {
                                                             schema = @Schema(implementation = Comments.class))}),
                             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true))),
                             @ApiResponse(responseCode = "404", description = "Not found",content = @Content(schema = @Schema(hidden = true)))})
-    public ResponseEntity<?> getAll(@PathVariable Integer id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Comments> getAll(@PathVariable Long id) {
+        Comments comments = commentsService.getAll(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(comments);
     }
 
     @Operation(summary = "Добавление комментария к объявлению")
@@ -42,8 +52,11 @@ public class CommentsController {
             @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not found",content = @Content(schema = @Schema(hidden = true)))})
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addComment(@PathVariable Integer id, @RequestBody CreateOrUpdateComment createOrUpdateComment) {
-        return ResponseEntity.ok().build();
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Comment> addComment(@PathVariable Long id, @RequestBody CreateOrUpdateComment createOrUpdateComment,
+                                              Authentication authentication) {
+        Comment comment = commentsService.createComment(id,createOrUpdateComment,authentication);
+        return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
 
     @Operation(summary = "Удаление комментария")
@@ -54,8 +67,17 @@ public class CommentsController {
             @ApiResponse(responseCode = "403", description = "Forbidden",content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not found",content = @Content(schema = @Schema(hidden = true)))})
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> delComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
-        return ResponseEntity.ok().build();
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> delComment(@PathVariable Integer adId, @PathVariable Integer commentId,
+                                        Authentication authentication) {
+        if (!commentsService.foundById(commentId)) {
+            return ResponseEntity.notFound().build();
+        } else if (!checkAccess(authentication, commentId) && !getRole(authentication).equals(Role.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            commentsService.deleteComment(commentId, authentication);
+            return ResponseEntity.ok().build();
+        }
     }
 
     @Operation(summary = "Обновление комментария")
@@ -67,7 +89,27 @@ public class CommentsController {
             @ApiResponse(responseCode = "403", description = "Forbidden",content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not found",content = @Content(schema = @Schema(hidden = true)))})
     @PatchMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> login(@PathVariable Integer id, @PathVariable Integer commentId, @RequestBody CreateOrUpdateComment createOrUpdateComment) {
-        return ResponseEntity.ok().build();
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Comment> updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody CreateOrUpdateComment createOrUpdateComment,
+                                         Authentication authentication) {
+        if (!commentsService.foundById(commentId)) {
+            return ResponseEntity.notFound().build();
+        } else if (!checkAccess(authentication, commentId) && !getRole(authentication).equals(Role.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            Comment comment=commentsService.updateComment(commentId,createOrUpdateComment,authentication);
+            return ResponseEntity.ok().body(comment);
+        }
+    }
+
+    private boolean checkAccess(Authentication authentication, Integer commentId) {
+        Long userId = adUtils.handleUser(authentication).getId();
+        Long authorId = commentsService.findById(commentId).getAuthor();
+        return userId.equals(authorId);
+    }
+
+    private Role getRole(Authentication authentication) {
+        UserEntity user = adUtils.handleUser(authentication);
+        return user.getRole();
     }
 }
