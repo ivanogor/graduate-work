@@ -22,6 +22,7 @@ import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.service.impl.AdsServiceImpl;
+import ru.skypro.homework.utils.AdServiceUtils;
 
 import java.io.IOException;
 
@@ -36,9 +37,11 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @Tag(name = "Объявления")
 public class AdsController {
     private final AdsServiceImpl adsService;
+    private final AdServiceUtils adUtils;
 
-    public AdsController(AdsServiceImpl adsService) {
+    public AdsController(AdsServiceImpl adsService, AdServiceUtils utils) {
         this.adsService = adsService;
+        this.adUtils = utils;
     }
 
     @Operation(summary = "Добавление объявления")
@@ -72,7 +75,6 @@ public class AdsController {
                     description = "Not found",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ExtendedAd> getExtendedAd(@PathVariable Integer id,
                                                     Authentication authentication) {
         if (!adsService.foundById(id)) {
@@ -201,13 +203,13 @@ public class AdsController {
     }
 
     private boolean checkAccess(Authentication authentication, Integer adId) {
-        Long userId = adsService.handleUser(authentication).getId();
+        Long userId = adUtils.handleUser(authentication).getId();
         Long authorId = adsService.findById(adId).getAuthor();
         return userId.equals(authorId);
     }
 
     private Role getRole(Authentication authentication) {
-        UserEntity user = adsService.handleUser(authentication);
+        UserEntity user = adUtils.handleUser(authentication);
         return user.getRole();
     }
 }

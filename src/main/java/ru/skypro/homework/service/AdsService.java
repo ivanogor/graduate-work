@@ -30,7 +30,5 @@ public interface AdsService {
 
     Boolean foundById(Integer id);
 
-    UserEntity handleUser(Authentication authentication);
-
     AdEntity findById(Integer id);
 }
