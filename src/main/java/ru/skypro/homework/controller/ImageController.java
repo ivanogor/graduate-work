@@ -3,7 +3,7 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.utils.AdImageMapper;
+import ru.skypro.homework.utils.ImageMapper;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -15,9 +15,9 @@ import java.nio.file.Path;
 @CrossOrigin("http://localhost:3000")
 @RequestMapping("image")
 public class ImageController {
-    private final AdImageMapper mapper;
+    private final ImageMapper mapper;
 
-    public ImageController(AdImageMapper mapper) {
+    public ImageController(ImageMapper mapper) {
         this.mapper = mapper;
     }
 

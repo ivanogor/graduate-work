@@ -15,7 +15,7 @@ import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserEntityRepository;
 
 import ru.skypro.homework.service.AdsService;
-import ru.skypro.homework.utils.AdImageMapper;
+import ru.skypro.homework.utils.ImageMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked create Ad method");
         UserEntity user = handleUser(authentication);
         String uniqueId = user.getEmail().concat("-").concat(createAd.getTitle());
-        String link = new AdImageMapper().mapFileToPath(image, uniqueId);
+        String link = new ImageMapper().mapFileToPath(image, uniqueId);
         AdEntity adEntity = createAd.mapDtoToAdEntity(link, user.getId());
         adRepository.save(adEntity);
         return Ad.mapEntityToDto(adEntity);
@@ -93,7 +93,7 @@ public class AdsServiceImpl implements AdsService {
     public byte[] updateImage(Integer id, MultipartFile image, Authentication authentication) throws IOException {
         logger.info("Was invoked update Ads image method");
         AdEntity ad = adRepository.findById(id).get();
-        return new AdImageMapper().mapPathToFile(ad.getImage());
+        return new ImageMapper().mapPathToFile(ad.getImage());
     }
 
     @Override
