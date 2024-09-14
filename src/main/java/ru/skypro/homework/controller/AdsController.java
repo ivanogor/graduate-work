@@ -90,7 +90,6 @@ public class AdsController {
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Ads.class))})
     })
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Ads> getAdsDto() {
         Ads response = adsService.getAdsDto();
         return ResponseEntity.ok().body(response);
