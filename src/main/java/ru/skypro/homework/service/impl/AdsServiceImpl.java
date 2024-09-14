@@ -12,7 +12,7 @@ import ru.skypro.homework.entity.AdEntity;
 
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdRepository;
-import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.repository.UserEntityRepository;
 
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.utils.AdImageMapper;
@@ -26,9 +26,10 @@ import java.util.stream.Collectors;
 public class AdsServiceImpl implements AdsService {
 
     private final AdRepository adRepository;
-    private final UserRepository userRepository;
+    private final UserEntityRepository userRepository;
 
     private final Logger logger = LoggerFactory.getLogger(AdsServiceImpl.class);
+    private final UserEntityRepository userEntityRepository;
 
     @Override
     public Ad createAds(CreateOrUpdateAd createAd, MultipartFile image, Authentication authentication)
@@ -55,7 +56,7 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked get all Ads method");
         ArrayList<Ad> ads = adRepository.findAll()
                 .stream()
-                .map(e -> Ad.mapEntityToDto(e))
+                .map(Ad::mapEntityToDto)
                 .collect(Collectors.toCollection(ArrayList::new));
         Integer countAd = ads.size();
         return new Ads().getAds(countAd, ads);
@@ -82,7 +83,7 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked get users Ads method");
         UserEntity user = handleUser(authentication);
         ArrayList<Ad> ads = adRepository.findAllByAuthor(user.getId()).stream()
-                .map(e -> Ad.mapEntityToDto(e))
+                .map(Ad::mapEntityToDto)
                 .collect(Collectors.toCollection(ArrayList::new));
         Integer countAd = ads.size();
         return new Ads().getAds(countAd, ads);
@@ -105,7 +106,7 @@ public class AdsServiceImpl implements AdsService {
     public UserEntity handleUser(Authentication authentication) {
         logger.info("Was invoked handle User method");
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        return userRepository.findByUsername(principal.getUsername());
+        return userEntityRepository.findByUsername(principal.getUsername());
     }
 
     @Override
