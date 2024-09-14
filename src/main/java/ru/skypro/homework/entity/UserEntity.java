@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,6 +45,9 @@ public class UserEntity {
 
     @Column(name = "image")
     private String image;
+
+    @Column(name = "enabled")
+    private boolean enabled;
 
     @Column(name = "ads")
     @OneToMany(mappedBy = "user")
