@@ -18,7 +18,7 @@ public class ImageMapper {
     private Logger logger = LoggerFactory.getLogger(ImageMapper.class);
 
     //@Value("${path.to.ads.folders}")
-    private final String savePath = "C:/Image";
+    private final String savePath = "D:/Image";
 
     public String mapFileToPath(MultipartFile imageFile, String uniqueId) throws IOException {
         logger.info("Was invoked handle image to string path method");

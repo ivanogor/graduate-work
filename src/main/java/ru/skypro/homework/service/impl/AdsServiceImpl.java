@@ -12,7 +12,7 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserEntityRepository;
 import ru.skypro.homework.service.AdsService;
-import ru.skypro.homework.utils.AdImageMapper;
+import ru.skypro.homework.utils.ImageMapper;
 import ru.skypro.homework.utils.AdServiceUtils;
 
 import java.io.IOException;
@@ -28,7 +28,6 @@ public class AdsServiceImpl implements AdsService {
     private final AdServiceUtils adUtils;
 
     private final Logger logger = LoggerFactory.getLogger(AdsServiceImpl.class);
-    private final UserEntityRepository userEntityRepository;
 
     @Override
     public Ad createAds(CreateOrUpdateAd createAd, MultipartFile image, Authentication authentication)

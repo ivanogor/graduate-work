@@ -8,14 +8,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.entity.UserEntity;
-import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.repository.UserEntityRepository;
 
 @Service
 @RequiredArgsConstructor
 public class AdServiceUtils {
     private final Logger logger = LoggerFactory.getLogger(AdServiceUtils.class);
 
-    private final UserRepository userRepository;
+    private final UserEntityRepository userRepository;
 
     public UserEntity handleUser(Authentication authentication) {
         logger.info("Was invoked handle User method");
