@@ -2,7 +2,6 @@ package ru.skypro.homework.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,11 +14,11 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 @Transactional
-public class AdImageMapper {
-    private Logger logger = LoggerFactory.getLogger(AdImageMapper.class);
+public class ImageMapper {
+    private Logger logger = LoggerFactory.getLogger(ImageMapper.class);
 
     //@Value("${path.to.ads.folders}")
-    private String savePath = "D:/Image";
+    private final String savePath = "C:/Image";
 
     public String mapFileToPath(MultipartFile imageFile, String uniqueId) throws IOException {
         logger.info("Was invoked handle image to string path method");

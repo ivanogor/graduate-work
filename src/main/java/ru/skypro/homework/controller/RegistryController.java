@@ -34,9 +34,12 @@ public class RegistryController {
                     content = @Content(schema = @Schema(hidden = true)))
     })
     public ResponseEntity<?> register(@RequestBody Register register) {
+        log.info("register : {}", register);
         if (authService.register(register)) {
+            log.info("register created");
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
+            log.info("register bad request");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

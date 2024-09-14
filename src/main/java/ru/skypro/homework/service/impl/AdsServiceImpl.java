@@ -8,11 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdEntity;
-
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdRepository;
-import ru.skypro.homework.repository.UserRepository;
-
+import ru.skypro.homework.repository.UserEntityRepository;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.utils.AdImageMapper;
 import ru.skypro.homework.utils.AdServiceUtils;
@@ -26,10 +24,11 @@ import java.util.stream.Collectors;
 public class AdsServiceImpl implements AdsService {
 
     private final AdRepository adRepository;
-    private final UserRepository userRepository;
+    private final UserEntityRepository userRepository;
     private final AdServiceUtils adUtils;
 
     private final Logger logger = LoggerFactory.getLogger(AdsServiceImpl.class);
+    private final UserEntityRepository userEntityRepository;
 
     @Override
     public Ad createAds(CreateOrUpdateAd createAd, MultipartFile image, Authentication authentication)
@@ -37,7 +36,7 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked create Ad method");
         UserEntity user = adUtils.handleUser(authentication);
         String uniqueId = user.getEmail().concat("-").concat(createAd.getTitle());
-        String link = new AdImageMapper().mapFileToPath(image, uniqueId);
+        String link = new ImageMapper().mapFileToPath(image, uniqueId);
         AdEntity adEntity = createAd.mapDtoToAdEntity(link, user.getId());
         adRepository.save(adEntity);
         return Ad.mapEntityToDto(adEntity);
@@ -56,7 +55,7 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked get all Ads method");
         ArrayList<Ad> ads = adRepository.findAll()
                 .stream()
-                .map(e -> Ad.mapEntityToDto(e))
+                .map(Ad::mapEntityToDto)
                 .collect(Collectors.toCollection(ArrayList::new));
         Integer countAd = ads.size();
         return new Ads().getAds(countAd, ads);
@@ -83,7 +82,7 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked get users Ads method");
         UserEntity user = adUtils.handleUser(authentication);
         ArrayList<Ad> ads = adRepository.findAllByAuthor(user.getId()).stream()
-                .map(e -> Ad.mapEntityToDto(e))
+                .map(Ad::mapEntityToDto)
                 .collect(Collectors.toCollection(ArrayList::new));
         Integer countAd = ads.size();
         return new Ads().getAds(countAd, ads);
@@ -93,7 +92,7 @@ public class AdsServiceImpl implements AdsService {
     public byte[] updateImage(Integer id, MultipartFile image, Authentication authentication) throws IOException {
         logger.info("Was invoked update Ads image method");
         AdEntity ad = adRepository.findById(id).get();
-        return new AdImageMapper().mapPathToFile(ad.getImage());
+        return new ImageMapper().mapPathToFile(ad.getImage());
     }
 
     @Override

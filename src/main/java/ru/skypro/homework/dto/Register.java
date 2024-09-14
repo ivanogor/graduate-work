@@ -3,6 +3,7 @@ package ru.skypro.homework.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import ru.skypro.homework.entity.Role;
+import ru.skypro.homework.entity.UserEntity;
 
 @Data
 public class Register {
@@ -19,4 +20,16 @@ public class Register {
     private String phone;
     @Schema(description = "роль пользователя")
     private Role role;
+
+    public UserEntity toUserEntity() {
+        return UserEntity
+                .builder()
+                .username(this.username)
+                .email(this.username)
+                .firstName(this.firstName)
+                .lastName(this.lastName)
+                .phone(this.phone)
+                .role(this.role)
+                .build();
+    }
 }

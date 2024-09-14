@@ -36,9 +36,11 @@ public class LoginController {
                     content = @Content(schema = @Schema(hidden = true)))
     })
     public ResponseEntity<?> login(@RequestBody(required = false) Login login) {
+        log.info("login: {}", login);
         if (authService.login(login.getUsername(), login.getPassword())) {
             return ResponseEntity.ok().build();
         } else {
+            log.error("login UNAUTHORIZED");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
