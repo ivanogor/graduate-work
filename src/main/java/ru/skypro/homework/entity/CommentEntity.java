@@ -20,11 +20,14 @@ public class CommentEntity {
     private Integer pk;
 
     @Column(name = "author")
-    private Integer author;
+    private Long author;
 
     @Column(name = "created_at")
     private Long createdAt;
 
     @Column(name = "text")
     private String text;
+
+    @Column(name = "ad")
+    private Long ad;
 }

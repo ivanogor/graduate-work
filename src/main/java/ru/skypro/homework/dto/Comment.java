@@ -14,7 +14,7 @@ import ru.skypro.homework.entity.UserEntity;
 @NoArgsConstructor
 public class Comment {
     @Schema(description = "id автора комментария")
-    private Integer author;
+    private Long author;
     @Schema(description = "ссылка на аватар автора комментария")
     private String authorImage;
     @Schema(description = "имя создателя комментария")
