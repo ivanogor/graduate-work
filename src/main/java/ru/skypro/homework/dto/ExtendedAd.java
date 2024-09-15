@@ -43,6 +43,7 @@ public class ExtendedAd {
                 .authorLastName(user.getLastName())
                 .phone(user.getPhone())
                 .email(user.getEmail())
+                .image(Ad.getImage())
                 .build();
     }
 }
