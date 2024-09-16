@@ -117,7 +117,7 @@ public class AdsController {
                                       Authentication authentication) {
         if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
-        } else if (!checkAccess(authentication, id) || !getRole(authentication).equals(Role.ADMIN)) {
+        } else if (!checkAccess(authentication, id) && !getRole(authentication).equals(Role.ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
             adsService.deleteAd(id, authentication);
