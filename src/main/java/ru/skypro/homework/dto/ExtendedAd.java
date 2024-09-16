@@ -8,42 +8,88 @@ import lombok.NoArgsConstructor;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.UserEntity;
 
+/**
+ * DTO для представления расширенной информации об объявлении.
+ * Этот класс используется для передачи расширенных данных об объявлении между слоями приложения.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExtendedAd {
-    @Schema(description = "id объявления")
+
+    /**
+     * ID объявления.
+     */
+    @Schema(description = "ID объявления")
     private Integer pk;
-    @Schema(description = "имя автора объявления")
+
+    /**
+     * Имя автора объявления.
+     */
+    @Schema(description = "Имя автора объявления")
     private String authorFirstName;
-    @Schema(description = "фамилия автора объявления")
+
+    /**
+     * Фамилия автора объявления.
+     */
+    @Schema(description = "Фамилия автора объявления")
     private String authorLastName;
-    @Schema(description = "описание объявления")
+
+    /**
+     * Описание объявления.
+     */
+    @Schema(description = "Описание объявления")
     private String description;
-    @Schema(description = "логин автора объявления")
+
+    /**
+     * Логин автора объявления.
+     */
+    @Schema(description = "Логин автора объявления")
     private String email;
-    @Schema(description = "ссылка на картинку объявления")
+
+    /**
+     * Ссылка на картинку объявления.
+     */
+    @Schema(description = "Ссылка на картинку объявления")
     private String image;
-    @Schema(description = "телефон автора объявления")
+
+    /**
+     * Телефон автора объявления.
+     */
+    @Schema(description = "Телефон автора объявления")
     private String phone;
-    @Schema(description = "цена объявления")
+
+    /**
+     * Цена объявления.
+     */
+    @Schema(description = "Цена объявления")
     private Integer price;
-    @Schema(description = "заголовок объявления")
+
+    /**
+     * Заголовок объявления.
+     */
+    @Schema(description = "Заголовок объявления")
     private String title;
 
-    public static ExtendedAd mapAdEntityToDto(AdEntity Ad, UserEntity user) {
-
+    /**
+     * Преобразует сущность объявления и сущность пользователя в DTO с расширенной информацией.
+     *
+     * @param ad Сущность объявления.
+     * @param user Сущность пользователя.
+     * @return DTO с расширенной информацией об объявлении.
+     */
+    public static ExtendedAd mapAdEntityToDto(AdEntity ad, UserEntity user) {
         return ExtendedAd.builder()
-                .pk(Ad.getPk())
-                .description(Ad.getDescription())
-                .price(Ad.getPrice())
-                .title(Ad.getTitle())
+                .pk(ad.getPk())
+                .description(ad.getDescription())
+                .price(ad.getPrice())
+                .title(ad.getTitle())
                 .authorFirstName(user.getFirstName())
                 .authorLastName(user.getLastName())
                 .phone(user.getPhone())
                 .email(user.getEmail())
-                .image(Ad.getImage())
+                .image(ad.getImage())
                 .build();
     }
 }

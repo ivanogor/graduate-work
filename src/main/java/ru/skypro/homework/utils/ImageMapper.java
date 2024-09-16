@@ -12,14 +12,28 @@ import java.nio.file.Path;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
+/**
+ * Сервис для работы с изображениями.
+ * Этот класс предоставляет методы для сохранения изображений на диск и получения их по ссылке.
+ */
 @Service
 @Transactional
 public class ImageMapper {
     private Logger logger = LoggerFactory.getLogger(ImageMapper.class);
 
-    //@Value("${path.to.ads.folders}")
+    /**
+     * Путь к директории для сохранения изображений.
+     */
     private final String savePath = "D:/Image";
 
+    /**
+     * Сохраняет изображение на диск и возвращает путь к нему.
+     *
+     * @param imageFile Изображение для сохранения.
+     * @param uniqueId Уникальный идентификатор для имени файла.
+     * @return Путь к сохраненному изображению.
+     * @throws IOException Если возникает ошибка при сохранении файла.
+     */
     public String mapFileToPath(MultipartFile imageFile, String uniqueId) throws IOException {
         logger.info("Was invoked handle image to string path method");
         Path filePath = Path.of(savePath, uniqueId + "." +
@@ -37,6 +51,13 @@ public class ImageMapper {
         return "/image/" + uniqueId + "." + getExtention(imageFile);
     }
 
+    /**
+     * Возвращает изображение по его ссылке.
+     *
+     * @param imageLink Ссылка на изображение.
+     * @return Массив байтов изображения.
+     * @throws IOException Если возникает ошибка при чтении файла.
+     */
     public byte[] mapPathToFile(String imageLink) throws IOException {
         Path path = Path.of(imageLink);
         File imageFile = new File(savePath.concat("\\").concat(imageLink));
@@ -49,11 +70,23 @@ public class ImageMapper {
         }
     }
 
+    /**
+     * Возвращает расширение файла изображения.
+     *
+     * @param imageFile Изображение.
+     * @return Расширение файла изображения.
+     */
     private String getExtention(MultipartFile imageFile) {
         String fileName = imageFile.getOriginalFilename();
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
+    /**
+     * Возвращает полный путь к изображению по его аргументу.
+     *
+     * @param arg Аргумент, содержащий имя файла изображения.
+     * @return Полный путь к изображению.
+     */
     public String getPath(String arg) {
         return savePath.concat("\\").concat(arg);
     }

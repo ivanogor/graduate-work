@@ -21,6 +21,11 @@ import ru.skypro.homework.service.UserService;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+/**
+ * Контроллер для управления пользователями.
+ * Предоставляет методы для обновления пароля, получения и обновления информации о текущем пользователе,
+ * а также для обновления аватара пользователя.
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -30,6 +35,12 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class UserController {
     private final UserService userService;
 
+    /**
+     * Обновляет пароль текущего пользователя.
+     *
+     * @param newPassword Новый пароль.
+     * @return Ответ об успешном обновлении пароля или ошибке доступа.
+     */
     @PostMapping("/set_password")
     @Operation(summary = "Обновление пароля")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -56,6 +67,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Получает информацию о текущем авторизованном пользователе.
+     *
+     * @return Информация о пользователе.
+     */
     @GetMapping("/me")
     @Operation(summary = "Получение информации об авторизованном пользователе")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -74,6 +90,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
 
+    /**
+     * Обновляет информацию о текущем авторизованном пользователе.
+     *
+     * @param updateUser Обновленная информация о пользователе.
+     * @return Обновленная информация о пользователе.
+     */
     @PatchMapping("/me")
     @Operation(summary = "Обновление информации об авторизованном пользователе")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -92,6 +114,12 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(updateUser));
     }
 
+    /**
+     * Обновляет аватар текущего авторизованного пользователя.
+     *
+     * @param image Новый аватар пользователя.
+     * @return Ответ об успешном обновлении аватара или ошибке доступа.
+     */
     @PatchMapping(value = "/me/image", consumes = MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Обновление аватара авторизованного пользователя")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",

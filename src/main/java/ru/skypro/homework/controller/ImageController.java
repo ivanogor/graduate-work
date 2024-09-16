@@ -11,6 +11,10 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Контроллер для работы с изображениями.
+ * Этот контроллер предоставляет API для получения изображений из файловой системы.
+ */
 @RestController
 @Tag(name = "API для работы с изображениями")
 @CrossOrigin("http://localhost:3000")
@@ -19,6 +23,13 @@ import java.nio.file.Path;
 public class ImageController {
     private final ImageMapper mapper;
 
+    /**
+     * Получение изображения по его аргументу.
+     *
+     * @param arg Аргумент, используемый для определения пути к изображению.
+     * @param response Объект HttpServletResponse для отправки изображения клиенту.
+     * @throws IOException Если возникает ошибка при чтении или записи изображения.
+     */
     @GetMapping("{arg}")
     @Operation(summary = "Получение изображения из файла")
     public void getImage(@PathVariable String arg, HttpServletResponse response) throws IOException {

@@ -29,6 +29,11 @@ import java.io.IOException;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+/**
+ * Контроллер для управления объявлениями.
+ * Этот контроллер предоставляет API для создания, получения, обновления и удаления объявлений.
+ * Он также обеспечивает доступ к объявлениям авторизованного пользователя и обновление изображений объявлений.
+ */
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 @RestController
@@ -39,11 +44,26 @@ public class AdsController {
     private final AdsServiceImpl adsService;
     private final AdServiceUtils adUtils;
 
+    /**
+     * Конструктор для создания экземпляра AdsController.
+     *
+     * @param adsService Сервис для работы с объявлениями.
+     * @param utils Утилиты для работы с объявлениями.
+     */
     public AdsController(AdsServiceImpl adsService, AdServiceUtils utils) {
         this.adsService = adsService;
         this.adUtils = utils;
     }
 
+    /**
+     * Добавление нового объявления.
+     *
+     * @param createAd Данные для создания объявления.
+     * @param image Изображение для объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с созданным объявлением.
+     * @throws IOException Если возникает ошибка при обработке изображения.
+     */
     @Operation(summary = "Добавление объявления")
     @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {@ApiResponse(responseCode = "201",
@@ -62,6 +82,13 @@ public class AdsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /**
+     * Получение информации об объявлении по его ID.
+     *
+     * @param id ID объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с расширенной информацией об объявлении.
+     */
     @Operation(summary = "Получение информации об объявлении")
     @GetMapping("{id}")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -85,6 +112,11 @@ public class AdsController {
         }
     }
 
+    /**
+     * Получение всех объявлений.
+     *
+     * @return Объект ResponseEntity со списком всех объявлений.
+     */
     @Operation(summary = "Получение всех объявлений")
     @GetMapping
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -97,6 +129,13 @@ public class AdsController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * Удаление объявления по его ID.
+     *
+     * @param id ID объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с соответствующим статусом.
+     */
     @Operation(summary = "Удаление объявления")
     @DeleteMapping("{id}")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
@@ -125,6 +164,14 @@ public class AdsController {
         }
     }
 
+    /**
+     * Обновление информации об объявлении по его ID.
+     *
+     * @param id ID объявления.
+     * @param ad Данные для обновления объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с обновленным объявлением.
+     */
     @Operation(summary = "Обновление информации об объявлении")
     @PatchMapping("{id}")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -155,6 +202,12 @@ public class AdsController {
         }
     }
 
+    /**
+     * Получение объявлений авторизованного пользователя.
+     *
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity со списком объявлений пользователя.
+     */
     @Operation(summary = "Получение объявлений авторизованного пользователя")
     @GetMapping("/me")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -170,6 +223,15 @@ public class AdsController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * Обновление картинки объявления по его ID.
+     *
+     * @param id ID объявления.
+     * @param image Новое изображение для объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с обновленным изображением.
+     * @throws IOException Если возникает ошибка при обработке изображения.
+     */
     @Operation(summary = "Обновление картинки объявления")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Ok",

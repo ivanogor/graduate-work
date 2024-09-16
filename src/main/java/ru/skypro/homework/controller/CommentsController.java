@@ -21,6 +21,10 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.service.impl.CommentsServiceImpl;
 import ru.skypro.homework.utils.AdServiceUtils;
 
+/**
+ * Контроллер для управления комментариями к объявлениям.
+ * Предоставляет методы для получения, добавления, обновления и удаления комментариев.
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -31,19 +35,33 @@ public class CommentsController {
     private final CommentsServiceImpl commentsService;
     private final AdServiceUtils adUtils;
 
+    /**
+     * Получает все комментарии к указанному объявлению.
+     *
+     * @param id Идентификатор объявления.
+     * @return Список комментариев к объявлению.
+     */
     @GetMapping("/{id}/comments")
     @Operation(summary = "Получение комментариев объявления")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
-                                        description = "Successfully retrieved",
-                                        content = {@Content(mediaType = "application/json",
-                                                            schema = @Schema(implementation = Comments.class))}),
-                            @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true))),
-                            @ApiResponse(responseCode = "404", description = "Not found",content = @Content(schema = @Schema(hidden = true)))})
+            description = "Successfully retrieved",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Comments.class))}),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Not found",content = @Content(schema = @Schema(hidden = true)))})
     public ResponseEntity<Comments> getAll(@PathVariable Long id) {
         Comments comments = commentsService.getAll(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(comments);
     }
 
+    /**
+     * Добавляет новый комментарий к указанному объявлению.
+     *
+     * @param id Идентификатор объявления.
+     * @param createOrUpdateComment Данные для создания комментария.
+     * @param authentication Аутентификация пользователя.
+     * @return Созданный комментарий.
+     */
     @Operation(summary = "Добавление комментария к объявлению")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Successfully retrieved",
@@ -59,6 +77,14 @@ public class CommentsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
 
+    /**
+     * Удаляет комментарий по его идентификатору.
+     *
+     * @param adId Идентификатор объявления.
+     * @param commentId Идентификатор комментария.
+     * @param authentication Аутентификация пользователя.
+     * @return Ответ об успешном удалении или ошибке доступа.
+     */
     @Operation(summary = "Удаление комментария")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "OK",
@@ -80,6 +106,15 @@ public class CommentsController {
         }
     }
 
+    /**
+     * Обновляет существующий комментарий.
+     *
+     * @param adId Идентификатор объявления.
+     * @param commentId Идентификатор комментария.
+     * @param createOrUpdateComment Новые данные для комментария.
+     * @param authentication Аутентификация пользователя.
+     * @return Обновленный комментарий.
+     */
     @Operation(summary = "Обновление комментария")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Successfully retrieved",
@@ -91,7 +126,7 @@ public class CommentsController {
     @PatchMapping("/{adId}/comments/{commentId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Comment> updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody CreateOrUpdateComment createOrUpdateComment,
-                                         Authentication authentication) {
+                                                 Authentication authentication) {
         if (!commentsService.foundById(commentId)) {
             return ResponseEntity.notFound().build();
         } else if (!checkAccess(authentication, commentId) && !getRole(authentication).equals(Role.ADMIN)) {

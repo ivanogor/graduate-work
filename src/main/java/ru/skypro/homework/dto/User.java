@@ -8,46 +8,78 @@ import lombok.NoArgsConstructor;
 import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.entity.UserEntity;
 
+/**
+ * DTO для представления информации о пользователе.
+ * Этот класс используется для передачи данных о пользователе между слоями приложения.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class User {
+
+    /**
+     * ID пользователя.
+     */
     @Schema(
-            description = "id пользователя"
+            description = "ID пользователя"
     )
     private Long id;
 
+    /**
+     * Логин пользователя.
+     */
     @Schema(
-            description = "логин пользователя"
+            description = "Логин пользователя"
     )
     private String email;
 
+    /**
+     * Имя пользователя.
+     */
     @Schema(
-            description = "имя пользователя"
+            description = "Имя пользователя"
     )
     private String firstName;
 
+    /**
+     * Фамилия пользователя.
+     */
     @Schema(
-            description = "фамилия пользователя"
+            description = "Фамилия пользователя"
     )
     private String lastName;
 
+    /**
+     * Телефон пользователя.
+     */
     @Schema(
-            description = "id пользователя"
+            description = "Телефон пользователя"
     )
     private String phone;
 
+    /**
+     * Роль пользователя.
+     */
     @Schema(
-            description = "роль пользователя", implementation = Role.class
+            description = "Роль пользователя", implementation = Role.class
     )
     private Role role;
 
+    /**
+     * Ссылка на аватар пользователя.
+     */
     @Schema(
-            description = "ссылка на аватар пользователя"
+            description = "Ссылка на аватар пользователя"
     )
     private String image;
 
+    /**
+     * Преобразует сущность пользователя в DTO.
+     *
+     * @param userEntity Сущность пользователя.
+     * @return DTO пользователя.
+     */
     public static User toDto(UserEntity userEntity) {
         return User.builder()
                 .email(userEntity.getEmail())
@@ -60,6 +92,11 @@ public class User {
                 .build();
     }
 
+    /**
+     * Преобразует DTO в сущность пользователя.
+     *
+     * @return Сущность пользователя.
+     */
     public UserEntity toEntity() {
         return UserEntity.builder()
                 .email(email)

@@ -7,22 +7,52 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.entity.AdEntity;
 
+/**
+ * DTO для представления объявления.
+ * Этот класс используется для передачи данных объявления между слоями приложения.
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Ad {
-    @Schema(description = "id автора объявления")
+
+    /**
+     * ID автора объявления.
+     */
+    @Schema(description = "ID автора объявления")
     private Long author;
-    @Schema(description = "ссылка на картинку объявления")
+
+    /**
+     * Ссылка на картинку объявления.
+     */
+    @Schema(description = "Ссылка на картинку объявления")
     private String image;
-    @Schema(description = "id объявления")
+
+    /**
+     * ID объявления.
+     */
+    @Schema(description = "ID объявления")
     private Integer pk;
-    @Schema(description = "цена объявления")
+
+    /**
+     * Цена объявления.
+     */
+    @Schema(description = "Цена объявления")
     private Integer price;
-    @Schema(description = "заголовок объявления")
+
+    /**
+     * Заголовок объявления.
+     */
+    @Schema(description = "Заголовок объявления")
     private String title;
 
+    /**
+     * Преобразует сущность объявления в DTO.
+     *
+     * @param ad Сущность объявления.
+     * @return DTO объявления.
+     */
     public static Ad mapEntityToDto(AdEntity ad) {
         return Ad.builder()
                 .title(ad.getTitle())
@@ -33,6 +63,12 @@ public class Ad {
                 .build();
     }
 
+    /**
+     * Преобразует DTO объявления в сущность.
+     *
+     * @param description Описание объявления.
+     * @return Сущность объявления.
+     */
     public AdEntity mapDtoToEntity(String description) {
         return AdEntity.builder()
                 .title(title)
