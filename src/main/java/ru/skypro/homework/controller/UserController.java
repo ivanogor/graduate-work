@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
-import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.service.UserService;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -101,6 +100,11 @@ public class UserController {
                     schema = @Schema(hidden = true))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true)))})
     public ResponseEntity<?> updateUserAvatar(@RequestParam("image") MultipartFile image) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            log.error("updateUserAvatar return UNAUTHORIZED");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         userService.updateUserAvatar(image);
         return ResponseEntity.ok().build();
     }

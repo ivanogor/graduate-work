@@ -2,6 +2,7 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.utils.ImageMapper;
 
@@ -14,12 +15,9 @@ import java.nio.file.Path;
 @Tag(name = "API для работы с изображениями")
 @CrossOrigin("http://localhost:3000")
 @RequestMapping("image")
+@RequiredArgsConstructor
 public class ImageController {
     private final ImageMapper mapper;
-
-    public ImageController(ImageMapper mapper) {
-        this.mapper = mapper;
-    }
 
     @GetMapping("{arg}")
     @Operation(summary = "Получение изображения из файла")
