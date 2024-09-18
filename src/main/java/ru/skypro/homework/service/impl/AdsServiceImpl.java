@@ -88,10 +88,14 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public byte[] updateImage(Integer id, MultipartFile image, Authentication authentication) throws IOException {
+    public void updateImage(Integer id, MultipartFile image, Authentication authentication) throws IOException {
         logger.info("Was invoked update Ads image method");
         AdEntity ad = adRepository.findById(id).get();
-        return new ImageMapper().mapPathToFile(ad.getImage());
+        UserEntity user = adUtils.handleUser(authentication);
+        String uniqueId = user.getEmail().concat("-").concat(ad.getTitle());
+        String imagePath = new ImageMapper().mapFileToPath(image, uniqueId);
+        ad.setImage(imagePath);
+        adRepository.save(ad);
     }
 
     @Override
