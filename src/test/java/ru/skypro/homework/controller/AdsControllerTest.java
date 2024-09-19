@@ -20,7 +20,6 @@ import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdRepository;
-import ru.skypro.homework.repository.UserEntityRepository;
 import ru.skypro.homework.service.impl.AdsServiceImpl;
 import ru.skypro.homework.utils.AdServiceUtils;
 
@@ -39,9 +38,6 @@ class AdsControllerTest {
 
     @MockBean
     private AdRepository adRepository;
-
-    @MockBean
-    private UserEntityRepository userRepository;
 
     @MockBean
     private AdServiceUtils adServiceUtils;
