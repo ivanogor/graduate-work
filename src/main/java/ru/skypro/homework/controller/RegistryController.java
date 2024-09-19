@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.service.AuthService;
 
+/**
+ * Контроллер для регистрации пользователей.
+ * Этот контроллер предоставляет API для регистрации новых пользователей в системе.
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -23,6 +27,12 @@ import ru.skypro.homework.service.AuthService;
 public class RegistryController {
     private final AuthService authService;
 
+    /**
+     * Регистрация нового пользователя.
+     *
+     * @param register Объект Register, содержащий данные для регистрации.
+     * @return Объект ResponseEntity с соответствующим статусом.
+     */
     @PostMapping
     @Operation(summary = "Регистрация пользователя")
     @ApiResponses(value = {@ApiResponse(responseCode = "201",

@@ -11,17 +11,19 @@ import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
-import ru.skypro.homework.repository.AuthorityRepository;
 import ru.skypro.homework.repository.UserEntityRepository;
 import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.utils.ImageMapper;
 
+import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserEntityRepository userEntityRepository;
-    private final AuthorityRepository authorityRepository;
+    private final ImageMapper imageMapper;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -74,7 +76,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserAvatar(MultipartFile image) {
+        // Получаем текущего пользователя (например, из SecurityContext)
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity currentUser = userEntityRepository.findByUsername(username);
 
+        // Генерируем уникальный идентификатор для файла
+        String uniqueId = UUID.randomUUID().toString();
+
+        try {
+            // Сохраняем файл и получаем путь к сохраненному файлу
+            String imagePath = imageMapper.mapFileToPath(image, uniqueId);
+
+            // Обновляем путь к аватару пользователя
+            currentUser.setImage(imagePath);
+
+            // Сохраняем изменения в базе данных
+            userEntityRepository.save(currentUser);
+        } catch (IOException e) {
+            // Обработка ошибки, если не удалось сохранить файл
+            throw new RuntimeException("Failed to update user avatar", e);
+        }
     }
 
     @Override
