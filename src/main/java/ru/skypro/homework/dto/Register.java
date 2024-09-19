@@ -1,7 +1,10 @@
 package ru.skypro.homework.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.entity.UserEntity;
 
@@ -9,6 +12,9 @@ import ru.skypro.homework.entity.UserEntity;
  * DTO для регистрации нового пользователя.
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Register {
     @Schema(description = "логин", minLength = 4, maxLength = 32)
     private String username;

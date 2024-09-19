@@ -54,6 +54,7 @@ public class CommentsServiceImpl implements CommentsService {
         UserEntity user = adUtils.handleUser(authentication);
         commentEnt.setText(comment.getText());
         repository.save(commentEnt);
+        commentEnt = repository.findById(id).orElseThrow();
         return Comment.toDto(commentEnt,user);
     }
 
