@@ -78,7 +78,7 @@ public interface AdsService {
      * @return Массив байтов нового изображения.
      * @throws IOException Если возникает ошибка при обработке изображения.
      */
-    byte[] updateImage(Integer id, MultipartFile image, Authentication authentication)
+    void updateImage(Integer id, MultipartFile image, Authentication authentication)
             throws IOException;
 
     /**

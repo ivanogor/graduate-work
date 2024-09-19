@@ -250,7 +250,7 @@ public class AdsController {
     })
     @PreAuthorize("isAuthenticated()")
     @PatchMapping(value = "{id}/image", consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateImage(@PathVariable Integer id,
+    public ResponseEntity<?> updateImage(@PathVariable Integer id,
                                               @RequestParam("image") MultipartFile image,
                                               Authentication authentication) throws IOException {
         if (!adsService.foundById(id)) {
@@ -258,8 +258,8 @@ public class AdsController {
         } else if (!checkAccess(authentication, id) && !getRole(authentication).equals(Role.ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
-            byte[] response = adsService.updateImage(id, image, authentication);
-            return ResponseEntity.ok().body(response);
+            adsService.updateImage(id, image, authentication);
+            return ResponseEntity.ok().build();
         }
     }
 
