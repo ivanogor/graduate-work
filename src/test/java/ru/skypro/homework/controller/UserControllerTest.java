@@ -61,6 +61,7 @@ class UserControllerTest {
                 .phone("+777777")
                 .username("username")
                 .enabled(true)
+                .password("test current")
                 .build();
 
         NewPassword newPassword = NewPassword.builder()
