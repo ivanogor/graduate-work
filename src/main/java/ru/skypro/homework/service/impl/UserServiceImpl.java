@@ -32,11 +32,11 @@ public class UserServiceImpl implements UserService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userEntityRepository.findByUsername(username);
 
-        if(Objects.isNull(user)) {
+        if (Objects.isNull(user)) {
             throw new UsernameNotFoundException("User not found");
         }
 
-        if(!passwordEncoder.matches(newPassword.getCurrentPassword(), user.getPassword())) {
+        if (!newPassword.getCurrentPassword().equals(user.getPassword())) {
             throw new BadCredentialsException("Wrong password");
         }
 
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userEntityRepository.findByUsername(username);
 
-        if(Objects.isNull(userEntity)) {
+        if (Objects.isNull(userEntity)) {
             throw new UsernameNotFoundException("User not found");
         }
 
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userEntityRepository.findByUsername(username);
 
-        if(Objects.isNull(userEntity)) {
+        if (Objects.isNull(userEntity)) {
             throw new UsernameNotFoundException("User not found");
         }
 
