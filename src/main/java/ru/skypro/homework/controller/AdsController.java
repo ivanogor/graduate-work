@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,13 +19,22 @@ import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.entity.Role;
+import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.service.impl.AdsServiceImpl;
+import ru.skypro.homework.utils.AdServiceUtils;
 
 import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+/**
+ * Контроллер для управления объявлениями.
+ * Этот контроллер предоставляет API для создания, получения, обновления и удаления объявлений.
+ * Он также обеспечивает доступ к объявлениям авторизованного пользователя и обновление изображений объявлений.
+ */
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
@@ -32,11 +42,28 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @Tag(name = "Объявления")
 public class AdsController {
     private final AdsServiceImpl adsService;
+    private final AdServiceUtils adUtils;
 
-    public AdsController(AdsServiceImpl adsService) {
+    /**
+     * Конструктор для создания экземпляра AdsController.
+     *
+     * @param adsService Сервис для работы с объявлениями.
+     * @param utils Утилиты для работы с объявлениями.
+     */
+    public AdsController(AdsServiceImpl adsService, AdServiceUtils utils) {
         this.adsService = adsService;
+        this.adUtils = utils;
     }
 
+    /**
+     * Добавление нового объявления.
+     *
+     * @param createAd Данные для создания объявления.
+     * @param image Изображение для объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с созданным объявлением.
+     * @throws IOException Если возникает ошибка при обработке изображения.
+     */
     @Operation(summary = "Добавление объявления")
     @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {@ApiResponse(responseCode = "201",
@@ -55,6 +82,13 @@ public class AdsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /**
+     * Получение информации об объявлении по его ID.
+     *
+     * @param id ID объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с расширенной информацией об объявлении.
+     */
     @Operation(summary = "Получение информации об объявлении")
     @GetMapping("{id}")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -68,16 +102,21 @@ public class AdsController {
                     description = "Not found",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ExtendedAd> getExtendedAd(@PathVariable Integer id,
                                                     Authentication authentication) {
-        if (!adsService.findById(id)) {
+        if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
+        } else {
+            ExtendedAd response = adsService.getExtendedAd(id, authentication);
+            return ResponseEntity.ok().body(response);
         }
-        ExtendedAd response = adsService.getExtendedAd(id, authentication);
-        return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * Получение всех объявлений.
+     *
+     * @return Объект ResponseEntity со списком всех объявлений.
+     */
     @Operation(summary = "Получение всех объявлений")
     @GetMapping
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -85,12 +124,18 @@ public class AdsController {
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Ads.class))})
     })
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Ads> getAdsDto() {
         Ads response = adsService.getAdsDto();
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * Удаление объявления по его ID.
+     *
+     * @param id ID объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с соответствующим статусом.
+     */
     @Operation(summary = "Удаление объявления")
     @DeleteMapping("{id}")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
@@ -109,13 +154,24 @@ public class AdsController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteAd(@PathVariable Integer id,
                                       Authentication authentication) {
-        if (!adsService.findById(id)) {
+        if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
+        } else if (!checkAccess(authentication, id) && !getRole(authentication).equals(Role.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            adsService.deleteAd(id, authentication);
+            return ResponseEntity.ok().build();
         }
-        adsService.deleteAd(id, authentication);
-        return ResponseEntity.ok().build();
     }
 
+    /**
+     * Обновление информации об объявлении по его ID.
+     *
+     * @param id ID объявления.
+     * @param ad Данные для обновления объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с обновленным объявлением.
+     */
     @Operation(summary = "Обновление информации об объявлении")
     @PatchMapping("{id}")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -136,13 +192,22 @@ public class AdsController {
     public ResponseEntity<Ad> updateAd(@PathVariable Integer id,
                                        @RequestBody CreateOrUpdateAd ad,
                                        Authentication authentication) {
-        if (!adsService.findById(id)) {
+        if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
+        } else if (!checkAccess(authentication, id) && !getRole(authentication).equals(Role.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            Ad response = adsService.updateAd(id, ad, authentication);
+            return ResponseEntity.ok().body(response);
         }
-        Ad response = adsService.updateAd(id, ad, authentication);
-        return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * Получение объявлений авторизованного пользователя.
+     *
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity со списком объявлений пользователя.
+     */
     @Operation(summary = "Получение объявлений авторизованного пользователя")
     @GetMapping("/me")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -158,6 +223,15 @@ public class AdsController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * Обновление картинки объявления по его ID.
+     *
+     * @param id ID объявления.
+     * @param image Новое изображение для объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Объект ResponseEntity с обновленным изображением.
+     * @throws IOException Если возникает ошибка при обработке изображения.
+     */
     @Operation(summary = "Обновление картинки объявления")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Ok",
@@ -176,13 +250,27 @@ public class AdsController {
     })
     @PreAuthorize("isAuthenticated()")
     @PatchMapping(value = "{id}/image", consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateImage(@PathVariable Integer id,
+    public ResponseEntity<?> updateImage(@PathVariable Integer id,
                                               @RequestParam("image") MultipartFile image,
                                               Authentication authentication) throws IOException {
-        if (!adsService.findById(id)) {
+        if (!adsService.foundById(id)) {
             return ResponseEntity.notFound().build();
+        } else if (!checkAccess(authentication, id) && !getRole(authentication).equals(Role.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            adsService.updateImage(id, image, authentication);
+            return ResponseEntity.ok().build();
         }
-        byte[] response = adsService.updateImage(id, image, authentication);
-        return ResponseEntity.ok().body(response);
+    }
+
+    private boolean checkAccess(Authentication authentication, Integer adId) {
+        Long userId = adUtils.handleUser(authentication).getId();
+        Long authorId = adsService.findById(adId).getAuthor();
+        return userId.equals(authorId);
+    }
+
+    private Role getRole(Authentication authentication) {
+        UserEntity user = adUtils.handleUser(authentication);
+        return user.getRole();
     }
 }

@@ -3,40 +3,46 @@ package ru.skypro.homework.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import ru.skypro.homework.entity.Role;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Конфигурация безопасности веб-приложения.
+ * Этот класс настраивает Spring Security для управления доступом к различным ресурсам приложения.
+ * Он определяет белый список URL-адресов, которые доступны без аутентификации,
+ * а также настраивает кодировщик паролей для безопасного хранения паролей пользователей.
+ */
 @Configuration
 public class WebSecurityConfig {
 
+    /**
+     * Список URL-адресов, которые доступны без аутентификации.
+     * Эти ресурсы включают в себя документацию Swagger, страницы входа и регистрации,
+     * а также некоторые статические ресурсы.
+     */
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",
             "/v3/api-docs",
             "/webjars/**",
             "/login",
-            "/register"
+            "/register",
+            "/ads",
+            "/src/**"
     };
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user =
-                User.builder()
-                        .username("user@gmail.com")
-                        .password("password")
-                        .passwordEncoder(passwordEncoder::encode)
-                        .roles(Role.USER.name())
-                        .build();
-        return new InMemoryUserDetailsManager(user);
-    }
-
+    /**
+     * Создает и настраивает цепочку фильтров безопасности.
+     * Этот метод определяет, какие запросы должны быть аутентифицированы,
+     * а какие могут быть доступны без аутентификации.
+     *
+     * @param http Объект HttpSecurity, используемый для настройки безопасности.
+     * @return Настроенная цепочка фильтров безопасности.
+     * @throws Exception Если возникает ошибка при настройке безопасности.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf()
@@ -54,6 +60,12 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    /**
+     * Создает и настраивает кодировщик паролей.
+     * Этот метод использует BCryptPasswordEncoder для безопасного хранения паролей пользователей.
+     *
+     * @return Настроенный кодировщик паролей.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

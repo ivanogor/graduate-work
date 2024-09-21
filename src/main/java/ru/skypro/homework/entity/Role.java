@@ -1,5 +1,16 @@
 package ru.skypro.homework.entity;
 
+/**
+ * Перечисление для представления ролей пользователей.
+ */
 public enum Role {
-    USER, ADMIN
+    /**
+     * Обычный пользователь.
+     */
+    USER,
+
+    /**
+     * Администратор.
+     */
+    ADMIN
 }
